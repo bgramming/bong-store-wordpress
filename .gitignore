@@ -1,0 +1,44 @@
+# WordPress
+wp-content/uploads/
+wp-content/cache/
+wp-content/backup-db/
+wp-content/backups/
+wp-content/upgrade/
+wp-content/w3tc-config/
+
+# Database
+database/backups/*.sql
+*.sql
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Logs
+*.log
+error_log
+debug.log
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Composer
+vendor/
+composer.lock
+
+# Node
+node_modules/
+package-lock.json
+
+# Temporary files
+*.tmp
+*.temp
+

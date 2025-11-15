@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # WordPress with PHP-FPM
+  wordpress:
+    image: wordpress:latest
+    container_name: bong-store-wordpress
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress_password_change_this
+      WORDPRESS_DB_NAME: bong_store
+      WORDPRESS_DEBUG: 1
+    volumes:
+      - ./wp-content:/var/www/html/wp-content
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    depends_on:
+      - db
+    networks:
+      - bong-store-network
+
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: bong-store-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: bong_store
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress_password_change_this
+      MYSQL_ROOT_PASSWORD: root_password_change_this
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database/backups:/backups
+    ports:
+      - "3306:3306"
+    networks:
+      - bong-store-network
+
+  # phpMyAdmin for database management
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: bong-store-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root_password_change_this
+    depends_on:
+      - db
+    networks:
+      - bong-store-network
+
+  # WP-CLI for command-line management
+  wpcli:
+    image: wordpress:cli
+    container_name: bong-store-wpcli
+    volumes:
+      - ./wp-content:/var/www/html/wp-content
+    depends_on:
+      - wordpress
+      - db
+    networks:
+      - bong-store-network
+    command: tail -f /dev/null
+
+volumes:
+  db_data:
+
+networks:
+  bong-store-network:
+    driver: bridge
+
